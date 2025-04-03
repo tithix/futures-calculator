@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futures Contract Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+        }
+
+        .ticker-btn {
+            transition: all 0.3s ease;
+        }
+
+        .ticker-btn.active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #e0e7ff;
+            border-color: #a5b4fc;
+        }
+
+        .result-card {
+            transition: all 0.5s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .ticker-info {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen gradient-bg flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl bg-white rounded-xl overflow-hidden card-shadow">
+        <!-- Header -->
+        <div class="bg-indigo-700 text-white p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Futures Calculator</h1>
+                    <p class="text-indigo-200">Optimize your risk management</p>
+                </div>
+                <div class="bg-white text-indigo-700 rounded-full p-3">
+                    <i class="fas fa-calculator text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="p-6">
+            <!-- Ticker Selection -->
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Select Index</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button id="nq-btn"
+                        class="ticker-btn py-3 px-4 rounded-lg bg-gray-100 hover:bg-indigo-50 border border-gray-200 text-gray-700 font-medium">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
+                                <span>NQ</span>
+                            </div>
+                            <div class="ticker-info hidden">
+                                $5/tick (0.25pt)<br>$20/point
+                            </div>
+                        </div>
+                    </button>
+                    <button id="mnq-btn"
+                        class="ticker-btn py-3 px-4 rounded-lg bg-gray-100 hover:bg-indigo-50 border border-gray-200 text-gray-700 font-medium">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
+                                <span>MNQ</span>
+                            </div>
+                            <div class="ticker-info hidden">
+                                $0.5/tick (0.25pt)<br>$2/point
+                            </div>
+                        </div>
+                    </button>
+                    <button id="es-btn"
+                        class="ticker-btn py-3 px-4 rounded-lg bg-gray-100 hover:bg-indigo-50 border border-gray-200 text-gray-700 font-medium">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
+                                <span>ES</span>
+                            </div>
+                            <div class="ticker-info hidden">
+                                $12.5/tick (0.25pt)<br>$50/point
+                            </div>
+                        </div>
+                    </button>
+                    <button id="mes-btn"
+                        class="ticker-btn py-3 px-4 rounded-lg bg-gray-100 hover:bg-indigo-50 border border-gray-200 text-gray-700 font-medium">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center">
+                                <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
+                                <span>MES</span>
+                            </div>
+                            <div class="ticker-info hidden">
+                                $1.25/tick (0.25pt)<br>$5/point
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Inputs -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <label for="capital" class="block text-sm font-medium text-gray-700 mb-1">Capital ($)</label>
+                    <div class="relative">
+                        <input type="number" id="capital"
+                            class="w-full p-3 border border-gray-300 rounded-lg input-focus focus:border-indigo-500"
+                            placeholder="10000">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-wallet text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="risk" class="block text-sm font-medium text-gray-700 mb-1">Risk (%)</label>
+                    <div class="relative">
+                        <input type="number" id="risk"
+                            class="w-full p-3 border border-gray-300 rounded-lg input-focus focus:border-indigo-500"
+                            placeholder="1">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-exclamation-triangle text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="stop-loss" class="block text-sm font-medium text-gray-700 mb-1">Stop Loss
+                        (ticks)</label>
+                    <div class="relative">
+                        <input type="number" id="stop-loss"
+                            class="w-full p-3 border border-gray-300 rounded-lg input-focus focus:border-indigo-500"
+                            placeholder="10">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-arrow-down text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="take-profit" class="block text-sm font-medium text-gray-700 mb-1">Take Profit
+                        (ticks)</label>
+                    <div class="relative">
+                        <input type="number" id="take-profit"
+                            class="w-full p-3 border border-gray-300 rounded-lg input-focus focus:border-indigo-500"
+                            placeholder="20">
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <i class="fas fa-arrow-up text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculate Button -->
+            <button id="calculate-btn"
+                class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition duration-300 mb-8">
+                <i class="fas fa-calculator mr-2"></i> Calculate
+            </button>
+
+            <!-- Results -->
+            <div id="results" class="hidden">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Results for <span id="selected-ticker-name"
+                        class="text-indigo-600">NQ</span></h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="result-card bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                            <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-balance-scale text-indigo-600"></i>
+                            </div>
+                            <span class="font-medium text-gray-700">Risk/Reward</span>
+                        </div>
+                        <div id="risk-reward" class="text-2xl font-bold text-indigo-600">1:2</div>
+                    </div>
+                    <div class="result-card bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                            <div class="bg-red-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-exclamation-circle text-red-600"></i>
+                            </div>
+                            <span class="font-medium text-gray-700">Risk ($)</span>
+                        </div>
+                        <div id="risk-usd" class="text-2xl font-bold text-red-600">$100</div>
+                    </div>
+                    <div class="result-card bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                            </div>
+                            <span class="font-medium text-gray-700">Potential Gain ($)</span>
+                        </div>
+                        <div id="potential-gain" class="text-2xl font-bold text-green-600">$200</div>
+                    </div>
+                    <div class="result-card bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                            <div class="bg-blue-100 p-2 rounded-full mr-3">
+                                <i class="fas fa-boxes text-blue-600"></i>
+                            </div>
+                            <span class="font-medium text-gray-700">Max Contracts</span>
+                        </div>
+                        <div id="max-contracts" class="text-2xl font-bold text-blue-600">2</div>
+                    </div>
+                </div>
+                <div class="mt-4 text-sm text-gray-500">
+                    <p id="ticker-details">NQ: $5 per tick (0.25 point) | $20 per point</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-50 px-6 py-4 text-center">
+            <p class="text-gray-500 text-sm">Powered by <span class="font-bold text-indigo-600">3dr!ves</span></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ticker data
+            const tickers = {
+                'NQ': { tickValue: 5, pointValue: 20, name: 'Nasdaq 100 (NQ)' },
+                'MNQ': { tickValue: 0.5, pointValue: 2, name: 'Micro Nasdaq (MNQ)' },
+                'ES': { tickValue: 12.5, pointValue: 50, name: 'S&P 500 (ES)' },
+                'MES': { tickValue: 1.25, pointValue: 5, name: 'Micro S&P (MES)' }
+            };
+
+            // Ticker selection
+            const tickerButtons = document.querySelectorAll('.ticker-btn');
+            let selectedTicker = 'NQ';
+
+            tickerButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    tickerButtons.forEach(btn => {
+                        btn.classList.remove('active', 'bg-indigo-100', 'border-indigo-300');
+                        btn.querySelector('.ticker-info').classList.add('hidden');
+                    });
+
+                    this.classList.add('active', 'bg-indigo-100', 'border-indigo-300');
+                    this.querySelector('.ticker-info').classList.remove('hidden');
+
+                    if (this.id === 'nq-btn') selectedTicker = 'NQ';
+                    else if (this.id === 'mnq-btn') selectedTicker = 'MNQ';
+                    else if (this.id === 'es-btn') selectedTicker = 'ES';
+                    else if (this.id === 'mes-btn') selectedTicker = 'MES';
+                });
+            });
+
+            // Calculate button
+            document.getElementById('calculate-btn').addEventListener('click', calculate);
+
+            function calculate() {
+                const capital = parseFloat(document.getElementById('capital').value) || 0;
+                const riskPercent = parseFloat(document.getElementById('risk').value) || 0;
+                const stopLossTicks = parseFloat(document.getElementById('stop-loss').value) || 0;
+                const takeProfitTicks = parseFloat(document.getElementById('take-profit').value) || 0;
+
+                if (capital <= 0 || riskPercent <= 0 || stopLossTicks <= 0 || takeProfitTicks <= 0) {
+                    alert('Please fill in all fields with positive values');
+                    return;
+                }
+
+                // Get ticker values
+                const ticker = tickers[selectedTicker];
+
+                // Calculations (Corrected)
+                const riskDollarsMax = capital * (riskPercent / 100);
+                const riskPerContract = stopLossTicks * ticker.tickValue;
+                const maxContracts = Math.floor(riskDollarsMax / riskPerContract);
+                const actualRiskDollars = maxContracts * riskPerContract;
+                const potentialGain = maxContracts * takeProfitTicks * ticker.tickValue;
+                const riskRewardRatio = (takeProfitTicks / stopLossTicks).toFixed(2);
+
+                // Display results
+                document.getElementById('risk-reward').textContent = `1:${riskRewardRatio}`;
+                document.getElementById('risk-usd').textContent = `$${actualRiskDollars.toFixed(2)}`;
+                document.getElementById('potential-gain').textContent = `$${potentialGain.toFixed(2)}`;
+                document.getElementById('max-contracts').textContent = maxContracts;
+                document.getElementById('selected-ticker-name').textContent = ticker.name;
+                document.getElementById('ticker-details').textContent =
+                    `${selectedTicker}: $${ticker.tickValue} per tick (0.25 point) | $${ticker.pointValue} per point`;
+
+                // Show results
+                document.getElementById('results').classList.remove('hidden');
+            }
+
+            // Initialize with NQ selected
+            document.getElementById('nq-btn').click();
+        });
+    </script>
+</body>
+
+</html>
